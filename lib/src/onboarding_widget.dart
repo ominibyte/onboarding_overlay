@@ -107,15 +107,26 @@ class OnboardingState extends State<Onboarding> {
   late OverlayEntry _overlayEntry;
   late OnboardingController controller;
 
+  late List<OnboardingStep> _steps;
+
   @override
   void initState() {
     super.initState();
-    controller = OnboardingController(steps: widget.steps);
+    _steps = widget.steps;
+    controller = OnboardingController(steps: _steps);
+  }
+  
+  void changeSteps(List<OnboardingStep> steps) {
+    hide();
+    setState(() {
+      _steps = steps;
+      controller = OnboardingController(steps: steps);
+    });
   }
 
   /// Shows an onboarding session with all steps provided and initial index passed via the widget
   void show() {
-    if (widget.steps.isNotEmpty) {
+    if (_steps.isNotEmpty) {
       _overlayEntry = _createOverlayEntry(initialIndex: widget.initialIndex);
       Overlay.of(context, rootOverlay: widget.globalOnboarding)
           .insert(_overlayEntry);
@@ -125,7 +136,7 @@ class OnboardingState extends State<Onboarding> {
 
   /// Shows an onboarding session from a specific step index
   void showFromIndex(int index) {
-    if (widget.steps.isNotEmpty) {
+    if (_steps.isNotEmpty) {
       _overlayEntry = _createOverlayEntry(initialIndex: index);
       Overlay.of(context, rootOverlay: widget.globalOnboarding)
           .insert(_overlayEntry);
@@ -135,7 +146,7 @@ class OnboardingState extends State<Onboarding> {
 
   /// Shows an onboarding session from a specific step index and a specific order and set of step indexes
   void showWithSteps(int index, List<int> stepIndexes) {
-    if (widget.steps.isNotEmpty && stepIndexes.isNotEmpty) {
+    if (_steps.isNotEmpty && stepIndexes.isNotEmpty) {
       _overlayEntry =
           _createOverlayEntry(initialIndex: index, stepIndexes: stepIndexes);
       Overlay.of(context, rootOverlay: widget.globalOnboarding)
@@ -171,7 +182,7 @@ class OnboardingState extends State<Onboarding> {
           return OnboardingStepper(
             constraints: constraints,
             initialIndex: initialIndex,
-            steps: widget.steps,
+            steps: _steps,
             stepIndexes: stepIndexes,
             duration: widget.duration,
             autoSizeTexts: widget.autoSizeTexts,
